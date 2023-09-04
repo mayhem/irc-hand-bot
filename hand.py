@@ -5,6 +5,7 @@ import irc.strings
 from irc.client import ip_numstr_to_quad, ip_quad_to_numstr
 
 from led_driver import LEDDriver
+from buttons import ButtonPoller
 
 NICKNAME = "hand-bot"
 
@@ -20,6 +21,9 @@ class HandBot(irc.bot.SingleServerIRCBot):
         self.led.start()
         self.led.set_pattern("idle")
 
+        self.buttons = ButtonPoller(self)
+        self.buttons.start()
+
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
 
@@ -30,6 +34,12 @@ class HandBot(irc.bot.SingleServerIRCBot):
         user = e.source.nick
         msg = e.arguments[0]
         self.do_command(user, msg)
+
+    def button_0_pressed(self):
+        print("but 0")
+
+    def button_1_pressed(self):
+        print("but 1")
 
     def set_state(self, state):
 
@@ -108,7 +118,7 @@ class HandBot(irc.bot.SingleServerIRCBot):
 
 def main():
     try:
-        bot = HandBot("#metabrainz", NICKNAME, "irc.libera.chat", 6667)
+        bot = HandBot("#musicbrianz", NICKNAME, "irc.libera.chat", 6667)
         bot.start()
     except KeyboardInterrupt as err:
         bot.disconnect()
