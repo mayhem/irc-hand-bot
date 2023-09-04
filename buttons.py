@@ -29,7 +29,7 @@ class ButtonPoller(Thread):
             if button1 == 0:
                 self.hand_bot.button_1_pressed()
 
-            sleep(.1)
+            sleep(.03)
 
 
 if __name__ == '__main__':

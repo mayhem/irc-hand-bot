@@ -15,7 +15,7 @@ class HandBot(irc.bot.SingleServerIRCBot):
     def __init__(self, channel, nickname, server, port=6667):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
-        self.is_raised = False
+        self.state = "idle"
         self.raised_nick = None
         self.user_queue = []
 
@@ -38,13 +38,14 @@ class HandBot(irc.bot.SingleServerIRCBot):
         self.do_command(user, msg)
 
     def button_0_pressed(self):
-        self.next_action()
+        self.ack_action()
+#        self.next_action()
 
     def button_1_pressed(self):
-        print("but 1")
+        self.ack_action()
 
     def next_action(self):
-        if not self.is_raised:
+        if self.state not in ("raised", "acked"):
             self.led.short_dim()
             return
 
@@ -63,29 +64,47 @@ class HandBot(irc.bot.SingleServerIRCBot):
             sleep(1)
             self.set_state("raised")
 
-    def set_state(self, state):
-
-        if state == "raised":
-            if self.is_raised:
-                return
-
-            self.is_raised = True
-            self.led.set_pattern(state)
+    def ack_action(self):
+        if self.state != "raised":
+            self.led.short_dim()
             return
 
-        if state == "idle":
-            if not self.is_raised:
+        self.set_state("acked")
+        if len(self.user_queue) > 0:
+            self.connection.privmsg(self.channel, f"{self.user_queue[0]}: you've been acknowledged")
+
+    def set_state(self, new_state):
+
+        if new_state == "raised":
+            if self.state == "raised":
                 return
 
-            self.is_raised = False
-            self.led.set_pattern(state)
+            self.state = new_state
+            self.led.set_pattern(new_state)
             return
 
-        if state == "rainbow":
-            if self.is_raised:
+        if new_state == "acked":
+            if self.state == "acked":
                 return
 
-            self.led.set_pattern(state)
+            self.state = new_state
+            self.led.set_pattern(new_state)
+            return
+
+        if new_state == "idle":
+            if self.state == "idle":
+                return
+
+            self.state = new_state
+            self.led.set_pattern(new_state)
+            return
+
+        if new_state == "rainbow":
+            if self.state != "idle":
+                return
+
+            self.led.set_pattern(new_state)
+
             return
 
     def do_command(self, user, msg):

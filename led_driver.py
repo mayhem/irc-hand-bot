@@ -25,6 +25,8 @@ class LEDDriver(Thread):
         self.rainbow_hue_index = 0.0
         self.raised_hue_index = 0.0
         self.raised_increment = None
+        self.acked_hue_index = 0.0
+        self.acked_increment = None
 
         self.startup()
 
@@ -59,6 +61,7 @@ class LEDDriver(Thread):
             sleep(.005)
 
     def idle(self, wait_ms=20, iterations=1):
+        self.strip.setBrightness(255)
         self.strip.setPixelColor(0, Color(  0, 32, 0))
         self.strip.setPixelColor(1, Color(  0, 32, 0))
         self.strip.setPixelColor(2, Color(64, 18, 0))
@@ -70,6 +73,7 @@ class LEDDriver(Thread):
         hue_end = .03
         steps = 50
 
+        self.strip.setBrightness(255)
         if self.raised_increment is None:
             self.raised_increment = (hue_end - hue_begin) / steps
 
@@ -85,9 +89,33 @@ class LEDDriver(Thread):
         for i in range(4):
             self.strip.setPixelColor(i, Color(int(r * 255), int(g * 255), int(b * 255)))
 
-        return .015 
+        return .01 
+
+    def acked(self):
+        hue_begin = 0.60
+        hue_end = 0.75
+        steps = 100
+
+        self.strip.setBrightness(96)
+        if self.acked_increment is None:
+            self.acked_increment = (hue_end - hue_begin) / steps
+
+        self.acked_hue_index += self.acked_increment
+        if self.acked_hue_index > hue_end:
+            self.acked_hue_index = hue_end - self.acked_increment
+            self.acked_increment = -self.acked_increment
+        elif self.acked_hue_index < hue_begin:
+            self.acked_hue_index = hue_begin - self.acked_increment
+            self.acked_increment = -self.acked_increment
+
+        r, g, b = hsv_to_rgb(self.acked_hue_index, 1.0, 1.0)
+        for i in range(4):
+            self.strip.setPixelColor(i, Color(int(r * 255), int(g * 255), int(b * 255)))
+
+        return .02 
 
     def rainbow(self):
+        self.strip.setBrightness(128)
         r, g, b = hsv_to_rgb(self.rainbow_hue_index, 1.0, 1.0)
         for i in range(4):
             self.strip.setPixelColor(i, Color(int(r * 255), int(g * 255), int(b * 255)))
@@ -96,7 +124,7 @@ class LEDDriver(Thread):
         return .01
 
     def set_pattern(self, pattern):
-        if pattern not in ("idle", "raised", "rainbow"):
+        if pattern not in ("idle", "raised", "rainbow", "acked"):
             return
         self.pattern = pattern
 
@@ -110,6 +138,8 @@ class LEDDriver(Thread):
                 delay = self.raised()
             elif self.pattern == "rainbow":
                 delay = self.rainbow()
+            elif self.pattern == "acked":
+                delay = self.acked()
 
             self.strip.show()
             sleep(delay)
@@ -118,6 +148,6 @@ class LEDDriver(Thread):
 if __name__ == '__main__':
     d = LEDDriver()
     d.start()
-    d.set_pattern("raised")
+    d.set_pattern("acked")
     while True:
         sleep(1)
