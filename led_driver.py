@@ -20,6 +20,7 @@ class LEDDriver(Thread):
         Thread.__init__(self)
         self.strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
         self.strip.begin()
+        self.strip.setBrightness(255)
         self.next_update = None
         self.rainbow_hue_index = 0.0
         self.raised_hue_index = 0.0
@@ -42,6 +43,20 @@ class LEDDriver(Thread):
             self.strip.setPixelColor(3, Color(  0, 180, 5))
             self.strip.show()
             sleep(.100)
+
+    def short_dim(self):
+        increment = 5
+        brightness = 255
+        while brightness > 64:
+            brightness = max(0, brightness - increment)
+            self.strip.setBrightness(brightness)
+            self.strip.show()
+            sleep(.005)
+        while brightness < 255:
+            brightness = min(255, brightness + increment)
+            self.strip.setBrightness(brightness)
+            self.strip.show()
+            sleep(.005)
 
     def idle(self, wait_ms=20, iterations=1):
         self.strip.setPixelColor(0, Color(  0, 32, 0))

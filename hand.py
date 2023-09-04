@@ -45,6 +45,7 @@ class HandBot(irc.bot.SingleServerIRCBot):
 
     def next_action(self):
         if not self.is_raised:
+            self.led.short_dim()
             return
 
         try:
