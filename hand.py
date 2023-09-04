@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from time import sleep
+
 import irc.bot
 import irc.strings
 from irc.client import ip_numstr_to_quad, ip_quad_to_numstr
@@ -36,10 +38,29 @@ class HandBot(irc.bot.SingleServerIRCBot):
         self.do_command(user, msg)
 
     def button_0_pressed(self):
-        print("but 0")
+        self.next_action()
 
     def button_1_pressed(self):
         print("but 1")
+
+    def next_action(self):
+        if not self.is_raised:
+            return
+
+        try:
+            popped = self.user_queue.pop(0)
+        except IndexError:
+            popped = None
+
+        if popped is not None:
+            self.connection.privmsg(self.channel, f"{popped}: your turn is now complete. thank you!")
+
+        if len(self.user_queue) == 0:
+            self.set_state("idle")
+        else:
+            self.set_state("idle")
+            sleep(1)
+            self.set_state("raised")
 
     def set_state(self, state):
 
@@ -91,7 +112,7 @@ class HandBot(irc.bot.SingleServerIRCBot):
             if len(self.user_queue) == 0:
                 self.set_state("idle")
 
-        elif msg == "!queue":
+        elif msg in ("!queue", "!waiting", "!status"):
 
             if len(self.user_queue) == 0:
                 c.privmsg(self.channel, f"the queue is empty")
