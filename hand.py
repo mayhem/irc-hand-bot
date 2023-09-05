@@ -162,6 +162,7 @@ def main():
         bot = HandBot("#musicbrianz", NICKNAME, "irc.libera.chat", 6667)
         bot.start()
     except KeyboardInterrupt as err:
+        bot.connection.privmsg(bot.channel, f"ack! pffft. I'm dead. 💀")
         bot.disconnect()
     finally:
         bot.disconnect()

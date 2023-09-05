@@ -71,6 +71,7 @@ class LEDDriver(Thread):
     def raised(self):
         hue_begin = 0.0
         hue_end = .03
+        hue_jitter = .01
         steps = 50
 
         self.strip.setBrightness(255)
@@ -85,8 +86,9 @@ class LEDDriver(Thread):
             self.raised_hue_index = hue_begin - self.raised_increment
             self.raised_increment = -self.raised_increment
 
-        r, g, b = hsv_to_rgb(self.raised_hue_index, 1.0, 1.0)
+        order = (0, 2, 1, 3)
         for i in range(4):
+            r, g, b = hsv_to_rgb(self.raised_hue_index + (hue_jitter * order[i]), 1.0, 1.0)
             self.strip.setPixelColor(i, Color(int(r * 255), int(g * 255), int(b * 255)))
 
         return .01 
@@ -94,6 +96,7 @@ class LEDDriver(Thread):
     def acked(self):
         hue_begin = 0.60
         hue_end = 0.75
+        hue_jitter = .03
         steps = 100
 
         self.strip.setBrightness(96)
@@ -108,8 +111,9 @@ class LEDDriver(Thread):
             self.acked_hue_index = hue_begin - self.acked_increment
             self.acked_increment = -self.acked_increment
 
-        r, g, b = hsv_to_rgb(self.acked_hue_index, 1.0, 1.0)
+        order = (0, 2, 1, 3)
         for i in range(4):
+            r, g, b = hsv_to_rgb(self.acked_hue_index + (hue_jitter * order[i]), 1.0, 1.0)
             self.strip.setPixelColor(i, Color(int(r * 255), int(g * 255), int(b * 255)))
 
         return .02 
