@@ -39,10 +39,9 @@ class HandBot(irc.bot.SingleServerIRCBot):
 
     def button_0_pressed(self):
         self.ack_action()
-#        self.next_action()
 
     def button_1_pressed(self):
-        self.ack_action()
+        self.next_action()
 
     def next_action(self):
         if self.state not in ("raised", "acked"):

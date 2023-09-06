@@ -31,20 +31,28 @@ class LEDDriver(Thread):
         self.startup()
 
     def startup(self):
-        for i in range(3):
-            self.strip.setPixelColor(0, Color(  0, 180, 5))
-            self.strip.setPixelColor(1, Color(  0, 180, 5))
-            self.strip.setPixelColor(2, Color(255, 50, 0))
-            self.strip.setPixelColor(3, Color(255, 50, 0))
+        for i in range(5):
+            self.strip.setPixelColor(0, Color(255, 60, 0))
+            self.strip.setPixelColor(1, Color(255, 60, 0))
+            self.strip.setPixelColor(2, Color(255, 0, 255))
+            self.strip.setPixelColor(3, Color(255, 0, 255))
             self.strip.show()
-            sleep(.100)
+            sleep(.2)
 
-            self.strip.setPixelColor(0, Color(255, 50, 0))
-            self.strip.setPixelColor(1, Color(255, 50, 0))
-            self.strip.setPixelColor(2, Color(  0, 180, 5))
-            self.strip.setPixelColor(3, Color(  0, 180, 5))
+            self.strip.setPixelColor(0, Color(255, 0, 255))
+            self.strip.setPixelColor(1, Color(255, 0, 255))
+            self.strip.setPixelColor(2, Color(255, 60, 0))
+            self.strip.setPixelColor(3, Color(255, 60, 0))
             self.strip.show()
-            sleep(.100)
+            sleep(.2)
+
+    def idle(self, wait_ms=20, iterations=1):
+        self.strip.setBrightness(255)
+        self.strip.setPixelColor(2, Color(  0, 32, 0))
+        self.strip.setPixelColor(3, Color(  0, 32, 0))
+        self.strip.setPixelColor(0, Color(64, 18, 0))
+        self.strip.setPixelColor(1, Color(64, 18, 0))
+        return .1 
 
     def short_dim(self):
         increment = 5
@@ -60,13 +68,6 @@ class LEDDriver(Thread):
             self.strip.show()
             sleep(.005)
 
-    def idle(self, wait_ms=20, iterations=1):
-        self.strip.setBrightness(255)
-        self.strip.setPixelColor(0, Color(  0, 32, 0))
-        self.strip.setPixelColor(1, Color(  0, 32, 0))
-        self.strip.setPixelColor(2, Color(64, 18, 0))
-        self.strip.setPixelColor(3, Color(64, 18, 0))
-        return .1 
 
     def raised(self):
         hue_begin = 0.0

@@ -12,7 +12,7 @@ class ButtonPoller(Thread):
     def __init__(self, hand_bot):
         Thread.__init__(self)
         self.button0_pin = 4
-        self.button1_pin = 17
+        self.button1_pin = 23
         self.hand_bot = hand_bot
 
         self.button0_last_down = 0

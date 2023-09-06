@@ -1,0 +1,8 @@
+[Unit]
+Description=IRC Hand
+
+[Service]
+ExecStart=/home/robert/irc-hand-bot/.ve/bin/python /home/robert/irc-hand-bot/hand.py
+
+[Install]
+WantedBy=multi-user.target
