@@ -158,7 +158,7 @@ class HandBot(irc.bot.SingleServerIRCBot):
 
 def main():
     try:
-        bot = HandBot("#musicbrianz", NICKNAME, "irc.libera.chat", 6667)
+        bot = HandBot("#metabrainz", NICKNAME, "irc.libera.chat", 6667)
         bot.start()
     except KeyboardInterrupt as err:
         bot.connection.privmsg(bot.channel, f"ack! pffft. I'm dead. 💀")
