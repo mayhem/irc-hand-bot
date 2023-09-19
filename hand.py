@@ -62,6 +62,7 @@ class HandBot(irc.bot.SingleServerIRCBot):
             self.set_state("idle")
             sleep(1)
             self.set_state("raised")
+            self.connection.privmsg(self.channel, f"{self.user_queue[0]} is up next.")
 
     def ack_action(self):
         if self.state != "raised":
